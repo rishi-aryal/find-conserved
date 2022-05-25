@@ -149,22 +149,23 @@ def main(argv):
         seq_num=1
         con_seq=[]
         for i in k_range_l:
-            if i[1]-i[0]>length:
-                con_seq.append(k_seq1[i[0]:i[1]+ksize])
-
+            if i[1] + ksize - i[0] >= length:
+                con_seq.append(k_seq1[i[0]:i[1]+ksize]) # make a list of conserved sequences on the first fasta sequence
+           
+        ## search the conserved sequence on all the input sequences on fasta file using regular expression. 
+        
         for seq in con_seq:
-            seq1=seq
-            pos1=[]
-            for genome in seq_list:           
+            pos_list=[]
+            for genome in seq_list: # for each genome provided in the fasta file, genome here indicated genome name to search in the name:seq dictionalry           
                 m=re.compile(seq).search(seq_dict[genome])
                 if not m:
                     continue        
                 else:
                     pos=str(m.span()[0])+"-"+ str(m.span()[1])
-                    pos1.append(genome+':'+pos)
-            if len(pos1)/len(seq_list)>=percent:
+                    pos_list.append(genome+':'+pos)
+            if len(pos_list)/len(seq_list)>=percent:
                 if position:
-                    print('>conserved_locus-'+str(seq_num)+' '+' '.join(pos1))
+                    print('>conserved_locus-'+str(seq_num)+' '+' '.join(pos_list))
                 else:
                     print('>conserved_locus-'+str(seq_num))
                 print ('\n'.join(textwrap.wrap(seq, 70)).strip() +'\n')
